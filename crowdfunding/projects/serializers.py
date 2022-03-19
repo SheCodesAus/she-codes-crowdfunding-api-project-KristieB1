@@ -1,4 +1,5 @@
 # from unittest.util import _MAX_LENGTH
+from msilib.schema import _Validation_records
 from rest_framework import serializers
 from .models import Project, Pledge
 
@@ -30,3 +31,14 @@ class ProjectSerializer(serializers.Serializer):
 
 class ProjectDetailSerializer(ProjectSerializer):
     pledges = PledgeSerializer(many=True, read_only=True)
+
+    def update(self, instance, validated_data):
+        instance.title = validated_data.get('title', instance.title)
+        instance.description = _Validation_records.get('description', instance.description)
+        instance.goal = validated_data.get('goal', instance.goal)
+        instance.iamge = validated_data.get('image', instance.image)
+        instance.is_open = validated_data.get('is_open', instance)
+        instance.date_created = validated_data.get('date_created', instance.date_created)
+        instance.owner = validated_data.get('ower', instance.owner)
+        instance.save()
+        return instance
