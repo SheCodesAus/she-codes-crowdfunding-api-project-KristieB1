@@ -1,16 +1,36 @@
 # from turtle import title
+from unicodedata import category
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.forms import CharField
 
 # Create your models here.
+
+class PledgeType(models.Model):
+    pledge_type_name = CharField(max_length=200)
+    
+
+class Category(models.Model):
+    category_name = CharField(max_length=200)
+
 class Project(models.Model):
     title = models.CharField(max_length=200)
+    blurb = models.TextField()
     description = models.TextField()
     goal = models.IntegerField()
-    image= models.URLField()
+    goal_date = models.DateTimeField()
+    progress = models.IntegerField()
+    primary_image= models.URLField()
+    secondary_image = models.URLField()
+    status = CharField(max_length=200)
     is_open = models.BooleanField()
     date_created = models.DateTimeField()
     # owner = models.CharField(max_length=200)
+    category = models.ForeignKey(
+        'Category',
+        on_delete=models.CASCADE,
+        related_name='category'
+    )
     owner = models.ForeignKey(
         get_user_model(),
         on_delete=models.CASCADE,
@@ -33,3 +53,9 @@ class Pledge(models.Model):
         on_delete=models.CASCADE,
         related_name='supporter_pledges'
     )
+    pledge_type = models.ForeignKey(
+        'PledgeType',
+        on_delete=models.CASCADE,
+        related_name='pledge_type'
+    )
+
