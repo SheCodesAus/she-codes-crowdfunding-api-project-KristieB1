@@ -6,7 +6,7 @@ from django.contrib import admin
 from .models import Category, PledgeType, Project
 # Register your models here.
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ['id','title', 'description', 'goal']
+    list_display = ['id','title', 'description', 'goal','category']
 
 admin.site.register(Project, ProjectAdmin)
 

@@ -6,8 +6,8 @@ from .models import Project, Pledge, Category, PledgeType
 
 class PledgeTypeSerializer(serializers.Serializer):
     id = serializers.ReadOnlyField()
-    pledge_type_name = serializers.ReadOnlyField()
-    pledge_id = serializers.IntegerField()
+    pledge_type_name = serializers.CharField(max_length=200)
+    
 
     def create(self, validated_data):
         return PledgeType.objects.create(**validated_data)
@@ -17,17 +17,19 @@ class PledgeSerializer(serializers.Serializer):
     amount = serializers.IntegerField()
     comment = serializers.CharField(max_length=200)
     anonymous = serializers.BooleanField()
-    supporter = serializers.CharField(max_length=200)
+    # supporter = serializers.CharField(max_length=200)
     project_id = serializers.IntegerField()
-    pledge_type = PledgeTypeSerializer(many=True, read_only=False)
+    pledge_type_id = serializers.IntegerField()
+    supporter = serializers.ReadOnlyField(source='supporter.id')
 
     def create(self, validated_data):
+        # print(**validated_data)
         return Pledge.objects.create(**validated_data)
+        
 
 class CategorySerializer(serializers.Serializer):
     id = serializers.ReadOnlyField()
-    project_id = serializers.IntegerField()
-    category_name = serializers.ReadOnlyField()
+    category_name = serializers.CharField(max_length=200)
 
     def create(self, validated_data):
         return Category.objects.create(**validated_data)
@@ -37,7 +39,7 @@ class ProjectSerializer(serializers.Serializer):
     id = serializers.ReadOnlyField()
     title = serializers.CharField(max_length=200)
     blurb = serializers.CharField(max_length=200)
-    category = CategorySerializer(many=True, read_only=False)
+    category_id = serializers.IntegerField()
     goal = serializers.IntegerField()
     goal_date = serializers.DateTimeField()
     progress = serializers.IntegerField()
