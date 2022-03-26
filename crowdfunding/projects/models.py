@@ -26,7 +26,7 @@ class Project(models.Model):
     secondary_image = models.URLField()
     status = models.CharField(max_length=200)
     is_open = models.BooleanField()
-    date_created = models.DateTimeField()
+    date_created = models.DateTimeField(auto_now=True)
     # owner = models.CharField(max_length=200)
     
     owner = models.ForeignKey(

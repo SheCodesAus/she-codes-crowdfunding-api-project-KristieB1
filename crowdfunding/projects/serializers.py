@@ -47,7 +47,7 @@ class ProjectSerializer(serializers.Serializer):
     primary_image = serializers.URLField()
     status = serializers.CharField(max_length=200)
     is_open = serializers.BooleanField()
-    date_created = serializers.DateTimeField()
+    date_created = serializers.ReadOnlyField()
     total_pledged = serializers.SerializerMethodField()
     progress_perc = serializers.SerializerMethodField()
 
@@ -60,7 +60,10 @@ class ProjectSerializer(serializers.Serializer):
         total_pledged = Project.objects.filter(pk=obj.id).annotate(
             total_pledged=Sum('pledges__amount')
         )[0].total_pledged
-        return (total_pledged/obj.goal)*100
+        if total_pledged:
+            return (total_pledged/obj.goal)*100
+        else:
+            return 0
         
     
 
