@@ -2,6 +2,7 @@
 # from msilib.schema import _Validation_records
 from unicodedata import category
 from rest_framework import serializers
+from django.db.models import Sum
 from .models import Project, Pledge, Category, PledgeType
 
 class PledgeTypeSerializer(serializers.Serializer):
@@ -47,6 +48,22 @@ class ProjectSerializer(serializers.Serializer):
     status = serializers.CharField(max_length=200)
     is_open = serializers.BooleanField()
     date_created = serializers.DateTimeField()
+    total_pledged = serializers.SerializerMethodField()
+    progress_perc = serializers.SerializerMethodField()
+
+    def get_total_pledged(self, obj):
+        return Project.objects.filter(pk=obj.id).annotate(
+            total_pledged=Sum('pledges__amount')
+        )[0].total_pledged
+
+    def get_progress_perc(self, obj):
+        total_pledged = Project.objects.filter(pk=obj.id).annotate(
+            total_pledged=Sum('pledges__amount')
+        )[0].total_pledged
+        return (total_pledged/obj.goal)*100
+        
+    
+
     # category = serializers.IntegerField()
     # owner = serializers.CharField(max_length=200)
     owner = serializers.ReadOnlyField(source='owner.id')
