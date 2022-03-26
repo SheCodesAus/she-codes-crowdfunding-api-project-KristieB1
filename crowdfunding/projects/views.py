@@ -5,6 +5,7 @@ from django.shortcuts import render
 # Create your views here.
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.pagination import LimitOffsetPagination
 
 # from crowdfunding.projects.permissions import IsOwnerOrReadOnly
 from .models import Project, Pledge, PledgeType, Category
@@ -81,7 +82,9 @@ class ProjectList(APIView):
 
     def get(self, request):
         projects = Project.objects.all()
-        serializer = ProjectSerializer(projects, many=True)
+        paginator = LimitOffsetPagination()
+        result_page = paginator.paginate_queryset(projects, request)
+        serializer = ProjectSerializer(result_page, many=True)
         return Response(serializer.data)
 
     def post(self, request):
