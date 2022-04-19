@@ -1,6 +1,7 @@
 # from unittest.util import _MAX_LENGTH
 # from msilib.schema import _Validation_records
 from unicodedata import category
+from django.forms import ValidationError
 from rest_framework import serializers
 from django.db.models import Sum
 from .models import Project, Pledge, Category, PledgeType
@@ -64,7 +65,12 @@ class ProjectSerializer(serializers.Serializer):
             return (total_pledged/obj.goal)*100
         else:
             return 0
-        
+
+    # def validate_goal_date(self, obj):
+     
+    #     if obj.goal_date==obj.date_created:
+    #         raise serializers.ValidationError("Your Goal Date must be in the future")
+    #     return goal_date
     
 
     # category = serializers.IntegerField()
