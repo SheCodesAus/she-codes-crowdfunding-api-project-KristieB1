@@ -65,7 +65,7 @@ class ProjectSerializer(serializers.Serializer):
             return (total_pledged/obj.goal)*100
         else:
             return 0
-
+    owner = serializers.ReadOnlyField(source='owner.id')
     # def validate_goal_date(self, obj):
      
     #     if obj.goal_date==obj.date_created:
@@ -75,7 +75,7 @@ class ProjectSerializer(serializers.Serializer):
 
     # category = serializers.IntegerField()
     # owner = serializers.CharField(max_length=200)
-    owner = serializers.ReadOnlyField(source='owner.id')
+    # owner = serializers.ReadOnlyField(source='owner.id')
     
 
     def create(self, validated_data):
