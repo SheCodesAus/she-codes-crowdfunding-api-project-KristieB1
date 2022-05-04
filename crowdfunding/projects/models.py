@@ -21,7 +21,7 @@ class Project(models.Model):
     description = models.TextField()
     goal = models.IntegerField()
     goal_date = models.DateTimeField()
-    progress = models.IntegerField()
+    # progress = models.IntegerField()
     primary_image= models.URLField()
     secondary_image = models.URLField()
     status = models.CharField(max_length=200)
@@ -42,6 +42,13 @@ class Project(models.Model):
         related_name='project_id'
     )
 
+    pledge_type = models.ForeignKey(
+        'PledgeType',
+        null=True, blank=True,
+        on_delete=models.CASCADE,
+        related_name='pledge_id'
+    )
+
 
 class Pledge(models.Model):
     amount = models.IntegerField()
@@ -59,11 +66,11 @@ class Pledge(models.Model):
         related_name='supporter_pledges'
     )
 
-    pledge_type = models.ForeignKey(
-        'PledgeType',
-        null=True, blank=True,
-        on_delete=models.CASCADE,
-        related_name='pledge_id'
-    )
+    # pledge_type = models.ForeignKey(
+    #     'PledgeType',
+    #     null=True, blank=True,
+    #     on_delete=models.CASCADE,
+    #     related_name='pledge_type_name'
+    # )
 
    
