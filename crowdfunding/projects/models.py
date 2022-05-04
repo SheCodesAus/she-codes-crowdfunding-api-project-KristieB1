@@ -20,7 +20,7 @@ class Project(models.Model):
     blurb = models.TextField()
     description = models.TextField()
     goal = models.IntegerField()
-    goal_date = models.DateTimeField()
+    goal_date = models.DateField()
     # progress = models.IntegerField()
     primary_image= models.URLField()
     secondary_image = models.URLField()

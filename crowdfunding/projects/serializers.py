@@ -45,15 +45,18 @@ class ProjectSerializer(serializers.Serializer):
     blurb = serializers.CharField(max_length=200)
     category_id = serializers.IntegerField()
     goal = serializers.IntegerField()
-    goal_date = serializers.DateTimeField()
+    goal_date = serializers.DateField()
     # progress = serializers.IntegerField()
     primary_image = serializers.URLField()
     status = serializers.CharField(max_length=200)
     is_open = serializers.BooleanField()
-    date_created = serializers.ReadOnlyField()
+    date_created = serializers.SerializerMethodField()
     pledge_type_id = serializers.IntegerField()
     total_pledged = serializers.SerializerMethodField()
     progress_perc = serializers.SerializerMethodField()
+
+    def get_date_created(self, obj):
+        return obj.date_created.date()
 
     def get_total_pledged(self, obj):
         return Project.objects.filter(pk=obj.id).annotate(
