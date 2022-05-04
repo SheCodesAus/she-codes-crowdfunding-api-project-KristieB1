@@ -21,11 +21,11 @@ class CustomUserSerializer(serializers.Serializer):
 
 class CustomUserDetailSerializer(CustomUserSerializer):
     def update(self, instance, validated_data):
-        instance.username = validated_data.get('username'.instance.username)
-        instance.firstName = validated_data.get('firstName'.instance.firstName)
-        instance.lastName = validated_data.get('lastName'.instance.lastName)
-        instance.avatar = validated_data.get('avatar'.instance.avatar)
-        instance.bio = validated_data.get('bio'.instance.bio)
+        instance.username = validated_data.get('username',instance.username)
+        instance.firstName = validated_data.get('firstName',instance.firstName)
+        instance.lastName = validated_data.get('lastName',instance.lastName)
+        instance.avatar = validated_data.get('avatar',instance.avatar)
+        instance.bio = validated_data.get('bio',instance.bio)
         instance.save()
         return instance
 
@@ -43,8 +43,8 @@ class RegisterSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ('username', 'password', 'password2', 'email', 'firstName', 'lastName')
         extra_kwargs = {
-            'first_name': {'required': True},
-            'last_name': {'required': True}
+            'firstName': {'required': True},
+            'lastName': {'required': True}
         }
 
     def validate(self, attrs):
@@ -57,8 +57,8 @@ class RegisterSerializer(serializers.ModelSerializer):
         user = CustomUser.objects.create(
             username=validated_data['username'],
             email=validated_data['email'],
-            first_name=validated_data['firstName'],
-            last_name=validated_data['lastName']
+            firstName=validated_data['firstName'],
+            lastName=validated_data['lastName']
         )
 
         

@@ -2,8 +2,11 @@
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status, permissions
+from rest_framework import status, permissions, generics
 from .models import CustomUser
+from django.contrib.auth import logout 
+from django.core.exceptions import ObjectDoesNotExist
+from django.utils.translation import gettext_lazy as _
 from .serializers import CustomUserSerializer, CustomUserDetailSerializer, RegisterSerializer
 
 
@@ -20,6 +23,23 @@ class CustomUserList(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors)
+
+class CustomUserLogOut(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        return self.logout(request)
+
+    def logout(self, request):
+        try:
+            request.user.auth_token.delete()
+        except (AttributeError, ObjectDoesNotExist):
+            pass
+
+        logout(request)
+
+        return Response({"success": _("Successfully logged out.")},
+                        status=status.HTTP_200_OK)
 
 
 class CustomUserDetail(APIView):
@@ -46,15 +66,22 @@ class CustomUserDetail(APIView):
         )
         if serializer.is_valid():
             serializer.save()
-            return Response(
-                serializer.data,
-                status=status.HTTP_200_OK
-                )
-        return Response(
-            serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class RegisterView(APIView):
+    def delete(self, request, pk):
+        user = self.get_object(pk)
+        user.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
     permission_classes = [permissions.AllowAny,]
     queryset = CustomUser.objects.all()
+
+    # def post(self, request):
+    #     serializer = RegisterSerializer(data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data)
+    #     return Response(serializer.errors)
