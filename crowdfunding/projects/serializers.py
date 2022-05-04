@@ -15,10 +15,29 @@ class PledgeTypeSerializer(serializers.Serializer):
         return PledgeType.objects.create(**validated_data)
 
 class PledgeSerializer(serializers.Serializer):
+
+    # class Meta: 
+    #    model  = Project
+    #    fields = "__all__"
+
     id = serializers.ReadOnlyField()
     amount = serializers.IntegerField()
     comment = serializers.CharField(max_length=200)
     anonymous = serializers.BooleanField()
+
+    # def validate_anonymous(Project, isAnon):
+       
+
+    def validate(self, data):
+        projectId = data['project_id']
+        project = Project.objects.get(pk=projectId)
+        pledgeType = project.pledge_type.pledge_type_name
+        if  pledgeType != 'financial' and  data['anonymous']:
+            raise serializers.ValidationError (f"Pledge cannot be anonymous for this project")
+        return data
+       
+
+    
     # supporter = serializers.CharField(max_length=200)
     project_id = serializers.IntegerField()
     # pledge_type_id = serializers.IntegerField()
