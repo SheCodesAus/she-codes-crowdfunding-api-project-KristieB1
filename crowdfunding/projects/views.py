@@ -86,6 +86,9 @@ class ProjectList(APIView):
         is_open = request.query_params.get('is_open', None)
         if is_open:
             projects = projects.filter(is_open=is_open)
+        is_archived = request.query_params.get('is_archived', None)
+        if is_archived==False:
+            projects = projects.filter(is_archived=is_archived)
         order_by = request.query_params.get('order_by', None)
         if order_by:
             projects = projects.order_by(order_by)

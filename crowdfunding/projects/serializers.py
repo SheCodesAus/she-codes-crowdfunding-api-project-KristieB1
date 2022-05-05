@@ -67,8 +67,9 @@ class ProjectSerializer(serializers.Serializer):
     goal_date = serializers.DateField()
     # progress = serializers.IntegerField()
     primary_image = serializers.URLField()
-    status = serializers.CharField(max_length=200)
+    status = serializers.SerializerMethodField()
     is_open = serializers.BooleanField()
+    is_archived = serializers.BooleanField()
     date_created = serializers.SerializerMethodField()
     pledge_type_id = serializers.IntegerField()
     total_pledged = serializers.SerializerMethodField()
@@ -90,6 +91,42 @@ class ProjectSerializer(serializers.Serializer):
             return (total_pledged/obj.goal)*100
         else:
             return 0
+
+    def get_status(self, obj):
+        total_pledged = Project.objects.filter(pk=obj.id).annotate(
+            total_pledged=Sum('pledges__amount')
+        )[0].total_pledged
+        
+        if obj.is_archived == False and total_pledged:
+            progress_perc = (total_pledged/obj.goal)*100 
+        elif obj.is_archived == True:
+            return "archived"
+        elif obj.is_open == False:
+            return "closed"
+        else:
+            return "open"
+        if obj.is_open == True and total_pledged == 0:
+            return "open"
+        if obj.is_open == True and total_pledged >0 and progress_perc <100:
+            return "in progress"
+        if obj.is_open == True and progress_perc >= 100:
+            return "fulfilled"
+        if obj.is_open == False:
+            return "closed"
+        if obj.is_archived == True:
+            return "archived"
+        else:
+            return "open"
+
+
+    #  projectId = data['project_id']
+    #     project = Project.objects.get(pk=projectId)
+    #     pledgeType = project.pledge_type.pledge_type_name
+    #     if  pledgeType != 'financial' and  data['anonymous']:
+    #         raise serializers.ValidationError (f"Pledge cannot be anonymous for this project")
+    #     return data
+        
+
     owner = serializers.ReadOnlyField(source='owner.id')
     owner_name = serializers.ReadOnlyField(source='owner.username')
     # def validate_goal_date(self, obj):
@@ -123,6 +160,7 @@ class ProjectDetailSerializer(ProjectSerializer):
         instance.primary_image = validated_data.get('primary_image', instance.primary_image)
         instance.secondary_image = validated_data.get('secondary_image', instance.secondary_image)
         instance.is_open = validated_data.get('is_open', instance.is_open)
+        instance.is_archived = validated_data.get('is_archived', instance.is_archived)
         instance.date_created = validated_data.get('date_created', instance.date_created)
         instance.pledge_type_id = validated_data.get('pledge_type_id', instance.pledge_type_id)
         instance.owner = validated_data.get('owner', instance.owner)

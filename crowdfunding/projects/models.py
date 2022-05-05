@@ -24,8 +24,9 @@ class Project(models.Model):
     # progress = models.IntegerField()
     primary_image= models.URLField()
     secondary_image = models.URLField()
-    status = models.CharField(max_length=200)
+    # status = models.CharField(max_length=200)
     is_open = models.BooleanField()
+    is_archived = models.BooleanField()
     date_created = models.DateTimeField(auto_now=True)
     # owner = models.CharField(max_length=200)
     
