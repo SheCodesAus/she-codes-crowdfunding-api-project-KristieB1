@@ -43,7 +43,20 @@ class PledgeSerializer(serializers.Serializer):
     # pledge_type_id = serializers.IntegerField()
     pledge_type = serializers.ReadOnlyField(source='project.pledge_type.pledge_type_name')
     supporter = serializers.ReadOnlyField(source='supporter.id')
-    supporter_name = serializers.ReadOnlyField(source='supporter.username')
+    supporter_name = serializers.SerializerMethodField()
+
+    def get_supporter_name (self, obj):
+        anonymous = obj.anonymous
+        obj.supporter_name = obj.supporter.username
+        if anonymous == True:
+            return "Anonymous"
+        elif anonymous == False:
+            return obj.supporter_name
+
+
+   
+    
+    # (source='supporter.username')
 
     def create(self, validated_data):
         # print(**validated_data)
@@ -96,7 +109,7 @@ class ProjectSerializer(serializers.Serializer):
         total_pledged = Project.objects.filter(pk=obj.id).annotate(
             total_pledged=Sum('pledges__amount')
         )[0].total_pledged
-        
+
         if obj.is_archived == False and total_pledged:
             progress_perc = (total_pledged/obj.goal)*100 
         elif obj.is_archived == True:
