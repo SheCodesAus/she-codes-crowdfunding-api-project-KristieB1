@@ -169,7 +169,7 @@ class ProjectDetailSerializer(ProjectSerializer):
         instance.goal = validated_data.get('goal', instance.goal)
         instance.goal_date = validated_data.get('goal_date', instance.goal_date)
         # instance.progress = validated_data.get('progress', instance.progress)
-        instance.status = validated_data.get('status', instance.status)
+        # instance.status = validated_data.get('status', instance.status)
         instance.primary_image = validated_data.get('primary_image', instance.primary_image)
         instance.secondary_image = validated_data.get('secondary_image', instance.secondary_image)
         instance.is_open = validated_data.get('is_open', instance.is_open)
