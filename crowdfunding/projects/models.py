@@ -23,7 +23,7 @@ class Project(models.Model):
     goal_date = models.DateField()
     # progress = models.IntegerField()
     primary_image= models.URLField()
-    secondary_image = models.URLField()
+    secondary_image = models.URLField(null=True, blank=True,)
     # status = models.CharField(max_length=200)
     is_open = models.BooleanField()
     is_archived = models.BooleanField()

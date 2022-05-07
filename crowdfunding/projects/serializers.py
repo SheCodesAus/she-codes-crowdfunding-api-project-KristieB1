@@ -1,5 +1,6 @@
 # from unittest.util import _MAX_LENGTH
 # from msilib.schema import _Validation_records
+# from typing_extensions import Required
 from unicodedata import category
 from django.forms import ValidationError
 from rest_framework import serializers
@@ -22,7 +23,7 @@ class PledgeSerializer(serializers.Serializer):
 
     id = serializers.ReadOnlyField()
     amount = serializers.IntegerField()
-    comment = serializers.CharField(max_length=200)
+    comment = serializers.CharField(max_length=200, required=False)
     anonymous = serializers.BooleanField()
 
     # def validate_anonymous(Project, isAnon):
@@ -138,7 +139,10 @@ class ProjectSerializer(serializers.Serializer):
     #     if  pledgeType != 'financial' and  data['anonymous']:
     #         raise serializers.ValidationError (f"Pledge cannot be anonymous for this project")
     #     return data
-        
+    description = serializers.CharField(max_length=200)
+    secondary_image = serializers.URLField(required=False)
+    pledge_type = serializers.ReadOnlyField(source='pledge_type.pledge_type_name') 
+    
 
     owner = serializers.ReadOnlyField(source='owner.id')
     owner_name = serializers.ReadOnlyField(source='owner.username')
@@ -158,10 +162,10 @@ class ProjectSerializer(serializers.Serializer):
         return Project.objects.create(**validated_data)
 
 class ProjectDetailSerializer(ProjectSerializer):
-    description = serializers.CharField(max_length=200)
-    secondary_image = serializers.URLField()
+    # description = serializers.CharField(max_length=200)
+    # secondary_image = serializers.URLField()
     pledges = PledgeSerializer(many=True, read_only=True)
-    pledge_type = serializers.ReadOnlyField(source='pledge_type.pledge_type_name')
+    # pledge_type = serializers.ReadOnlyField(source='pledge_type.pledge_type_name')
 
     def update(self, instance, validated_data):
         instance.title = validated_data.get('title', instance.title)
