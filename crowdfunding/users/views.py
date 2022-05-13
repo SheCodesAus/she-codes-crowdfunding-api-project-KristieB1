@@ -56,8 +56,30 @@ class CustomUserDetail(APIView):
         serializer = CustomUserSerializer(user)
         return Response(serializer.data)
 
-    def put(self, request, pk):
+
+    def delete(self, request, pk):
         user = self.get_object(pk)
+        user.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class CustomUserAsMe(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self,pk):
+        try:
+            return CustomUser.objects.get(pk=pk)
+        except CustomUser.DoesNotExist:
+            raise Http404
+
+    def get(self, request):
+        
+        user = self.get_object(self.request.user.id)
+        serializer = CustomUserSerializer(instance=user)
+        return Response(serializer.data)
+
+    def put(self, request):
+        user = self.get_object(self.request.user.id)
         data = request.data
         serializer = CustomUserDetailSerializer(
             instance=user,
@@ -69,10 +91,7 @@ class CustomUserDetail(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, pk):
-        user = self.get_object(pk)
-        user.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
