@@ -8,6 +8,8 @@ urlpatterns = [
     path('pledges/', views.PledgeList.as_view()),
     path('pledgeTypes/', views.PledgeTypeList.as_view()),
     path('categories/', views.CategoryList.as_view()),
+    path('myProjects/', views.MyProjectList.as_view()),
+    path('myPledges/', views.MyPledgeList.as_view()),
 
 ]
 

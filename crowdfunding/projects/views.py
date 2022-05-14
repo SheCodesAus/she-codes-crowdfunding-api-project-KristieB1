@@ -87,7 +87,7 @@ class ProjectList(APIView):
         if is_open:
             projects = projects.filter(is_open=is_open)
         is_archived = request.query_params.get('is_archived', None)
-        if is_archived==False:
+        if is_archived:
             projects = projects.filter(is_archived=is_archived)
         order_by = request.query_params.get('order_by', None)
         if order_by:
@@ -146,4 +146,30 @@ class ProjectDetail(APIView):
         return Response(
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST)
+
+
+class MyProjectList(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        projects = Project.objects.all().filter(owner=self.request.user.id)
+        
+        is_archived = request.query_params.get('is_archived', None)
+        if is_archived:
+            projects = projects.filter(is_archived=is_archived)
+        order_by = request.query_params.get('order_by', None)
+        if order_by:
+            projects = projects.order_by(order_by)
+        paginator = LimitOffsetPagination()
+        result_page = paginator.paginate_queryset(projects, request)
+        serializer = ProjectSerializer(result_page, many=True)
+        return Response(serializer.data)
+
+class MyPledgeList(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get (self, request):
+        pledges = Pledge.objects.all().filter(supporter=self.request.user.id)
+        serializer = PledgeSerializer(pledges, many=True)
+        return Response(serializer.data)
 
