@@ -12,8 +12,8 @@ class CustomUserSerializer(serializers.Serializer):
     firstName = serializers.CharField(max_length=100)
     lastName = serializers.CharField(max_length=100)
     email = serializers.CharField(max_length=100)
-    avatar = serializers.URLField()
-    bio = serializers.CharField(max_length=1000)
+    avatar = serializers.URLField(max_length=1000)
+    bio = serializers.CharField(max_length=2000)
     
 
     def create(self, validated_data):
