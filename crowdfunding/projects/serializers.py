@@ -114,23 +114,23 @@ class ProjectSerializer(serializers.Serializer):
         if obj.is_archived == False and total_pledged:
             progress_perc = (total_pledged/obj.goal)*100 
         elif obj.is_archived == True:
-            return "archived"
+            return "Archived"
         elif obj.is_open == False:
-            return "closed"
+            return "Closed"
         else:
-            return "open"
+            return "Open"
         if obj.is_open == True and total_pledged == 0:
-            return "open"
+            return "Open"
         if obj.is_open == True and total_pledged >0 and progress_perc <100:
-            return "in progress"
+            return "In Progress"
         if obj.is_open == True and progress_perc >= 100:
-            return "fulfilled"
+            return "Fulfilled"
         if obj.is_open == False:
-            return "closed"
+            return "Closed"
         if obj.is_archived == True:
-            return "archived"
+            return "Archived"
         else:
-            return "open"
+            return "Open"
 
 
     #  projectId = data['project_id']
