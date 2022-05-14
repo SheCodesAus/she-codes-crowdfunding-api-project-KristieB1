@@ -41,6 +41,7 @@ class PledgeSerializer(serializers.Serializer):
     
     # supporter = serializers.CharField(max_length=200)
     project_id = serializers.IntegerField()
+    project_title = serializers.ReadOnlyField(source='project.title')
     # pledge_type_id = serializers.IntegerField()
     pledge_type = serializers.ReadOnlyField(source='project.pledge_type.pledge_type_name')
     supporter = serializers.ReadOnlyField(source='supporter.id')
