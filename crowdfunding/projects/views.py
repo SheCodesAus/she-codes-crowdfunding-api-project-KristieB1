@@ -83,12 +83,9 @@ class ProjectList(APIView):
     def get(self, request):
         projects = Project.objects.all()
         
-        is_open = request.query_params.get('is_open', None)
-        if is_open:
-            projects = projects.filter(is_open=is_open)
-        is_archived = request.query_params.get('is_archived', None)
-        if is_archived:
-            projects = projects.filter(is_archived=is_archived)
+        projects = projects.filter(is_open=True)
+       
+        projects = projects.filter(is_archived=False)
         order_by = request.query_params.get('order_by', None)
         if order_by:
             projects = projects.order_by(order_by)
@@ -109,6 +106,26 @@ class ProjectList(APIView):
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
+
+
+class LatestProjectList(APIView):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get(self, request):
+        projects = Project.objects.all()
+        
+        
+    
+        projects = projects.filter(is_open=True)
+       
+        
+        projects = projects.filter(is_archived=False)
+        
+        projects = projects.order_by('-date_created')[:3]
+        paginator = LimitOffsetPagination()
+        result_page = paginator.paginate_queryset(projects, request)
+        serializer = ProjectSerializer(result_page, many=True)
+        return Response(serializer.data)
 
 class ProjectDetail(APIView):
     permission_classes = [

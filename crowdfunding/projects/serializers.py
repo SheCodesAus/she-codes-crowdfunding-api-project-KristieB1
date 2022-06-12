@@ -17,16 +17,13 @@ class PledgeTypeSerializer(serializers.Serializer):
 
 class PledgeSerializer(serializers.Serializer):
 
-    # class Meta: 
-    #    model  = Project
-    #    fields = "__all__"
+    
 
     id = serializers.ReadOnlyField()
     amount = serializers.IntegerField()
     comment = serializers.CharField(max_length=200, required=False)
     anonymous = serializers.BooleanField()
 
-    # def validate_anonymous(Project, isAnon):
        
 
     def validate(self, data):
@@ -103,7 +100,7 @@ class ProjectSerializer(serializers.Serializer):
             total_pledged=Sum('pledges__amount')
         )[0].total_pledged
         if total_pledged:
-            return (total_pledged/obj.goal)*100
+            return round(((total_pledged/obj.goal)*100),2)
         else:
             return 0
 
